@@ -3,14 +3,12 @@ class OrdersController < ApplicationController
   before_action :authenticate_user!, only: [:index, :create]
 
   def index
-    if current_user == @item.user
+    if current_user == @item.user || @item.order.present?
       redirect_to root_path
-    elsif @item.order.present?
-      redirect_to root_path
-    else
-      gon.public_key = ENV["PAYJP_PUBLIC_KEY"]
-      @order_address = OrderAddress.new
+      return
     end
+    gon.public_key = ENV["PAYJP_PUBLIC_KEY"]
+    @order_address = OrderAddress.new
   end
 
   def create
